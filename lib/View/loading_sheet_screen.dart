@@ -10,7 +10,7 @@ import '../Controller/loading_sheet_item_list_controller.dart';
 
 class LoadingSheetItemListScreen extends StatelessWidget {
   LoadingSheetItemListScreen({super.key});
-  final ListController listController = Get.put(ListController());
+  final MyController listController = Get.put(MyController());
 
   @override
   Widget build(BuildContext context) {

@@ -66,142 +66,149 @@ class LoadingSheetItemListScreen extends StatelessWidget {
               SizedBox(
                 height: 10,
               ),
-              Obx(
-                () => ListView.separated(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: listController.itemList.length,
-                  separatorBuilder: (context, index) => SizedBox(
-                    height: 8,
-                  ),
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4,),
-                      child: Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black38),
-                          borderRadius: BorderRadius.circular(8),
-                          color: AppColors.white,),
-                        child: Theme(
-                            data: Theme.of(context).copyWith(
-                                dividerColor: Colors.transparent),
-                            child: IgnorePointer(
-                              ignoring: false,
-                              child:Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                    16, 8, 0, 0),
-                                child: Column(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.start,
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
+               GetBuilder<MyController>(
+                 builder: (controller) {
+                   return ListView.separated(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: listController.itemList.length,
+                      separatorBuilder: (context, index) => SizedBox(
+                        height: 8,
+                      ),
+                      itemBuilder: (context, index) {
+                        CreateListModelLoading item  = listController.itemList[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4,),
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black38),
+                              borderRadius: BorderRadius.circular(8),
+                              color: AppColors.white,),
+                            child: Theme(
+                                data: Theme.of(context).copyWith(
+                                    dividerColor: Colors.transparent),
+                                child: IgnorePointer(
+                                  ignoring: false,
+                                  child:Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        16, 8, 0, 0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          'Sheet No: 2765',
-                                          style: const TextStyle(
-                                              fontSize: 17,
-                                              fontWeight:
-                                              FontWeight.w500,
-                                              color: AppColors
-                                                  .primary),
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(left: 130),
-                                            child: Text(
-                                              "09 Nov 2023",
-                                              // textAlign:
-                                              // TextAlign.end,
+                                        Row(
+                                          children: [
+                                            Text(
+                                              item.sheetno ?? "",
                                               style: const TextStyle(
-                                                  fontSize: 15,
+                                                  fontSize: 17,
                                                   fontWeight:
                                                   FontWeight.w500,
-                                                  color: Colors.black54),
+                                                  color: AppColors
+                                                      .primary),
                                             ),
+                                            Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 190),
+                                                child: Text(
+                                                 item.date ??"",
+                                                  // textAlign:
+                                                  // TextAlign.end,
+                                                  style: const TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                      FontWeight.w500,
+                                                      color: Colors.black54),
+                                                ),
+                                              ),
+                                            ),
+
+                                          ],
+
+
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: _buildTileTextTime(
+                                                  text:
+                                                  item.starttime ??"",
+                                                  title: 'StartTime:'
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 40),
+                                                child: _buildTileTextTime(
+                                                    text:
+                                                    item.endtime ??"",
+                                                    title: 'EndTime:'
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: _buildTileText(
+                                                  text:
+                                                  item.partyname ??"",
+                                                  title: 'Party Name'),
+                                            ),
+
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(bottom: 10),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment
+                                                .spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: _buildTileText(
+                                                    text:
+                                                    item.category ??"",
+                                                    title: 'Item Category'),
+                                              ),
+
+                                            ],
                                           ),
                                         ),
-
                                       ],
 
-
                                     ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment
-                                          .spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: _buildTileTextTime(
-                                              text:
-                                              "9:00 am",
-                                              title: 'StartTime:'
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: _buildTileTextTime(
-                                              text:
-                                              "6:00 pm",
-                                              title: 'EndTime:'
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment
-                                          .spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: _buildTileText(
-                                              text:
-                                              "ABC Suppliers",
-                                              title: 'Party Name'),
-                                        ),
-
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 10),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment
-                                            .spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            child: _buildTileText(
-                                                text:
-                                                "Fruits",
-                                                title: 'Item Category'),
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-
-                                ),
-                              )
+                                  )
 
 
-                            )),
+                                )),
 
-                      ),
+                          ),
+                        );
+                      },
                     );
-                  },
-                ),
-              ),
+                 }
+               ),
+
             ],
           ),
         ),

@@ -1,34 +1,44 @@
 import 'package:axolon_loading_sheet/Controller/loading_sheet_item_list_controller.dart';
 import 'package:axolon_loading_sheet/Resources/Colors.dart';
 import 'package:axolon_loading_sheet/View/loading_sheet_screen.dart';
+import 'package:axolon_loading_sheet/View/test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_getx_widget.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-
+import 'package:auto_size_text/auto_size_text.dart';
 import '../Controller/add_item_controller.dart';
 import '../Models/partname_dropdowm_models.dart';
 import 'Components/filterdialog.dart';
+import 'Components/party_name_row.dart';
+import 'Components/popup_shimmer.dart';
+import 'Components/quantity_adding_sheet.dart';
+import 'package:get/get.dart';
 
 class CreateLoadingSheetScreen extends StatelessWidget {
   CreateLoadingSheetScreen({super.key});
-  final MyController listController = Get.put(MyController());
-  final addItemController = Get.put(AddItemController());
-  // final List<String> items = List.generate(5, (index) => 'Item ${index + 1}');
+
+  //final MyController listController = Get.put(MyController());
+  //final addItemController = Get.put(AddItemController());
   final MyController controller = Get.put(MyController());
+  final TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController textController = TextEditingController();
+  final TextEditingController textControllerdtype = TextEditingController();
+  final List<String> partyname = ['Party1', 'Party2', 'Party3', 'Party4'];
+  final List<String> documentype = ['Dtype1', 'Dtype2', 'Dtype3', 'Dtype4'];
+  TextEditingController _quantityController = TextEditingController();
+  TextEditingController _discountAmountController = TextEditingController();
+
+  FocusNode _discountAmountFocusNode = FocusNode();
+  FocusNode _discountPercentageFocusNode = FocusNode();
+  FocusNode _remarksFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
-    String text = 'Apple, Banana, Orange';
-    List<String> fruitsList = text.split('+'); // Splitting by comma and space
-
     return Scaffold(
       backgroundColor: Color(0xffe0e0e0),
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
+              controller.clearInputValue();
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -64,8 +74,9 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(top: 20),
+                              padding: const EdgeInsets.only(top: 10),
                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
                                     'Sheet No: 2765',
@@ -75,25 +86,46 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                                         color: AppColors.primary),
                                   ),
                                   Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 140),
-                                      child: Text(
-                                        "09 Nov 2023",
-                                        // textAlign:
-                                        // TextAlign.end,
-                                        style: const TextStyle(
+                                      child: Padding(
+                                    padding: const EdgeInsets.only(left: 79),
+                                    child: IconButton(
+                                      onPressed: () {
+                                        controller.selectDate(context);
+                                      },
+                                      icon: Icon(Icons.calendar_month_outlined,color: AppColors.mutedColor,),
+                                    ),
+                                  )
+                                      // Padding(
+                                      //   padding: const EdgeInsets.only(left: 140),
+                                      //   child: Text(
+                                      //     "09 Nov 2023",
+                                      //     // textAlign:
+                                      //     // TextAlign.end,
+                                      //     style: const TextStyle(
+                                      //         fontSize: 15,
+                                      //         fontWeight: FontWeight.w500,
+                                      //         color: Colors.black),
+                                      //   ),
+                                      // ),
+                                      ),
+                                  Expanded(
+                                    child: GetX<MyController>(
+                                      builder: (controller) => Text(
+                                        '${controller.selectedDate.value.toLocal()}'
+                                            .split(' ')[0],
+                                        style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black),
+                                            color: AppColors.mutedColor,
+                                            ),
                                       ),
                                     ),
-                                  ),
+                                  )
                                 ],
                               ),
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
+                            // const SizedBox(
+                            //   height: 5,
+                            // ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -103,97 +135,74 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                                 ),
                                 Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.only(right: 15),
-                                      child: TextButton(
-                                        child:  Obx(
-                                              () => Text(
-                                            '${controller.selectedStartTime.value.format(context)}',
-                                            style: TextStyle(fontSize: 13.8,color: Colors.black,fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        onPressed: (){
-                                          controller.selectStartTime(context);
-                                        },
+                                  padding: const EdgeInsets.only(right: 15),
+                                  child: TextButton(
+                                    child: Obx(
+                                      () => Text(
+                                        '${controller.selectedStartTime.value.format(context)}',
+                                      style: TextStyle(
+                                      fontSize: 12,
+                                        color: AppColors.mutedColor,
                                       ),
-                                    )),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      controller.selectStartTime(context);
+                                    },
+                                  ),
+                                )),
                                 Expanded(
                                   child: _buildTileTextTime(
                                       text: "", title: 'EndTime'),
                                 ),
                                 Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.only(right: 15),
-                                      child: TextButton(
-                                        child:  Obx(
-                                              () => Text(
-                                            '${controller.selectedEndTime.value.format(context)}',
-                                            style: TextStyle(fontSize: 13.8,color: Colors.black,fontWeight: FontWeight.bold),
-                                          ),
+                                  padding: const EdgeInsets.only(right: 15),
+                                  child: TextButton(
+                                    child: Obx(
+                                      () => Text(
+                                        '${controller.selectedEndTime.value.format(context)}',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColors.mutedColor,
                                         ),
-                                        onPressed: (){
-                                          controller.selectEndTime(context);
-                                        },
                                       ),
-                                    )),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                               mainAxisAlignment:
-                               MainAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: _buildTileText(
-                                      text: "", title: 'Party Name'),
-                                ),
-                            //   SizedBox(width: 1,),
-                               // Text("hi"),
-                                Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 70),
-                                      child: DropdownButtonFormField<DropdownOption>(
-
-                                      decoration: const InputDecoration(
-                                      hintText: '',
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors.transparent),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors.transparent),
-                                      ),
-                                      ),
-                                      value:
-                                        controller.selectedOption.value.isEmpty
-                                            ? null
-                                            : controller.dropdownOptions
-                                                .firstWhere((option) =>
-                                                    option.value ==
-                                                    controller
-                                                        .selectedOption.value),
-                                      items: controller.dropdownOptions
-                                        .map<DropdownMenuItem<DropdownOption>>(
-                                          (DropdownOption option) =>
-                                              DropdownMenuItem(
-                                            value: option,
-                                            child: Text(option.displayText),
-                                          ),
-                                        )
-                                        .toList(),
-                                      //hint: Text('Select an option'),
-                                      onChanged: (DropdownOption? newValue) {
-                                      controller.selectedOption.value =
-                                          newValue!.value;
-                                      },
+                                    ),
+                                    onPressed: () {
+                                      controller.selectEndTime(context);
+                                    },
                                   ),
-                                    ))
+                                )),
                               ],
                             ),
-                            const SizedBox(
-                              height: 10,
+
+                            Obx(
+                              () => ParrtyNameRow(
+                                  pname: true,
+                                  dtype: false,
+                                  onTap: () async {
+                                    //   salesController.resetCustomerList();
+                                    //  salesController.isSearching.value = false;
+                                    //   if (!salesController.isCustomerLoading.value) {
+                                    //     var customer =
+                                    await selectDocumentType(
+                                      context: context,pname: true,dtype: false
+                                    );
+                                    //     if (customer.code != null) {
+                                    //   salesController.selectCustomer(customer);
+                                    //     }
+                                    //   }
+                                  },
+                                  controller: TextEditingController(
+                                    text: controller.selectedValue.value,
+                                    // ?"Select"
+                                    //  :controller.selectedValue.value
+                                  ),
+                                  isLoading:
+                                      controller.isCustomerLoading.value),
+                            ),
+                            SizedBox(
+                              height: 15,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -204,55 +213,36 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                            //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Expanded(
-                                  child: _buildTileText(
-                                      text: "", title: 'Document Type'),
-                                ),
-                                Expanded(
-                                    child:
-                                        Padding(
-                                          padding: const EdgeInsets.only(right: 70),
-                                          child: DropdownButtonFormField<DropdownOption>(
-                                  decoration: const InputDecoration(
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide:
-                                            BorderSide(color: Colors.transparent),
+                            // const SizedBox(
+                            //   height: 5,
+                            // ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              child: Obx(
+                                () => ParrtyNameRow(
+                                    pname: false,
+                                    dtype: true,
+                                    onTap: () async {
+                                      //   salesController.resetCustomerList();
+                                      //  salesController.isSearching.value = false;
+                                      //   if (!salesController.isCustomerLoading.value) {
+                                      //     var customer =
+                                      await selectDocumentType(
+                                        context: context, pname: false,dtype: true
+                                      );
+                                      //     if (customer.code != null) {
+                                      //   salesController.selectCustomer(customer);
+                                      //     }
+                                      //   }
+                                    },
+                                    controller: TextEditingController(
+                                      text: controller.selectedValuedtype.value,
+                                      // ?"Select"
+                                      //         :controller.selectedValuedtype.value,
                                     ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide:
-                                            BorderSide(color: Colors.transparent),
-                                    ),
-//
-                                  ),
-                                  value: controller.selectedOption.value.isEmpty
-                                      ? null
-                                      : controller.dropdownOptions.firstWhere(
-                                            (option) =>
-                                                option.value ==
-                                                controller.selectedOption.value),
-                                  items: controller.dropdownOptions
-                                      .map<DropdownMenuItem<DropdownOption>>(
-                                          (DropdownOption option) =>
-                                              DropdownMenuItem(
-                                            value: option,
-                                            child: Text(option.displayText),
-                                          ),
-                                      )
-                                      .toList(),
-                                  // hint: Text('Select an option'),
-                                  onChanged: (DropdownOption? newValue) {
-                                    controller.selectedOption.value =
-                                          newValue!.value;
-                                  },
-                                ),
-                                        ))
-                              ],
+                                    isLoading:
+                                        controller.isCustomerLoading.value),
+                              ),
                             ),
                             const SizedBox(
                               height: 10,
@@ -261,8 +251,53 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  child: _buildTileTextTime(
-                                      text: "10", title: 'Total Quantity'),
+                                  child: InkWell(
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                            backgroundColor: Colors.white,
+                                            isScrollControlled: true,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.vertical(
+                                                top: Radius.circular(30),
+                                              ),
+                                            ),
+                                            context: context,
+                                            builder: (context) => QuantitySheet(
+                                                onTapPercent: () {},
+                                                onTapAmount: () {},
+                                                onChangePercent: (value) {},
+                                                onChangeAmount: (value) {},
+
+                                                quantityController:
+                                                    _quantityController));
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Text("Total Quantity:  ", style: TextStyle(fontSize: 15, color: AppColors.mutedColor)),
+                                          Expanded(
+                                              child: TextField(
+                                                controller: _textEditingController,
+                                                keyboardType: TextInputType.number,
+                                                textAlign: TextAlign.center,
+                                                decoration: new InputDecoration.collapsed(
+                                                    hintText: ''
+                                                ),
+                                                // decoration: InputDecoration(
+                                                //   enabledBorder: OutlineInputBorder(
+                                                //     borderSide:
+                                                //     BorderSide(color: Colors.black12),
+                                                //   ),
+                                                // ),
+                                              )),
+                                          // GetX<MyController>(
+                                          //   builder: (controller) => Text(
+                                          //     '${controller.inputValue.value}',
+                                          //     style: TextStyle(fontSize: 18),
+                                          //   ),
+                                          // ),
+                                        ],
+                                      )),
                                 ),
                                 Expanded(
                                   child: _buildTileTextTime(
@@ -302,7 +337,9 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                             child: Row(
                               children: [
                                 IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      _showDialog(context);
+                                    },
                                     icon: Icon(
                                       Icons.add,
                                       size: 30,
@@ -325,156 +362,191 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Obx(
-                        () => ListView.separated(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: listController.createList.length,
-                          separatorBuilder: (context, index) => SizedBox(
-                            height: 8,
-                          ),
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 4,
+                      child:
+                         GetBuilder<MyController>(
+                           builder: (controller) {
+                             return ListView.separated(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: controller.createList.length,
+                              separatorBuilder: (context, index) => SizedBox(
+                                height: 8,
                               ),
-                              child: Container(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.black26),
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: AppColors.white,
-                                ),
-                                child: Theme(
-                                    data: Theme.of(context).copyWith(
-                                        dividerColor: Colors.transparent),
-                                    child: IgnorePointer(
-                                        ignoring: false,
-                                        child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              16, 8, 0, 0),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
+                              itemBuilder: (context, index) {
+                                CreateListModel item  = controller.createList[index];
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 4,
+                                  ),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.black26),
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: AppColors.white,
+                                    ),
+                                    child: Theme(
+                                        data: Theme.of(context).copyWith(
+                                            dividerColor: Colors.transparent),
+                                        child: IgnorePointer(
+                                            ignoring: false,
+                                            child: Padding(
+                                              padding: const EdgeInsets.fromLTRB(
+                                                  16, 8, 0, 0),
+                                              child: Column(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Expanded(
-                                                    child: _buildTileText(
-                                                        text: "Apple",
-                                                        title: 'Item'),
-                                                  ),
-                                                  Expanded(
-                                                    child: _buildTileText(
-                                                        text: "-",
-                                                        title: 'Brand Origin'),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Expanded(
-                                                    child: _buildTileText(
-                                                        text: "Apple",
-                                                        title: 'Description'),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                // mainAxisAlignment:
-                                                // MainAxisAlignment.spaceBetween,
+                                                    MainAxisAlignment.start,
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Expanded(
-                                                    child: _buildTileTextTime(
-                                                        text: "90",
-                                                        title: 'Quantity'),
-                                                  ),
-                                                  Expanded(
-                                                      child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 150),
-                                                    child: Icon(
-                                                      Icons.add,
-                                                      size: 30,
-                                                      color: Color(0xff01579b),
-                                                    ),
-                                                  )),
-                                                  Expanded(
-                                                    child: Container(
-                                                      height: 50,
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        // scrollDirection: Axis.horizontal,
-                                                        child: Obx(() => Text(
-                                                              controller
-                                                                  .text.value,
-                                                              style: TextStyle(
-                                                                  fontSize: 18),
-                                                              softWrap: true,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .clip,
-                                                            )),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: _buildTileText(
+                                                            text: item.itemCode ?? '',
+                                                            title: 'Item'),
                                                       ),
-                                                      // child: GetX<MyController>(
-                                                      //   builder: (controller) {
-                                                      //     if (controller.items.isEmpty) {
-                                                      //       return CircularProgressIndicator(); // Show loader while fetching data
-                                                      //     } else {
-                                                      //       return ListView.builder(
-                                                      //        // physics: NeverScrollableScrollPhysics(),
-                                                      //         scrollDirection: Axis.horizontal,
-                                                      //         itemCount: controller.items.length,
-                                                      //         itemBuilder: (BuildContext context, int index) {
-                                                      //           final item = controller.items[index];
-                                                      //           return Card(
-                                                      //             child:  Container(
-                                                      //               decoration: BoxDecoration(
-                                                      //                 color: Color(0xffeeeeee),
-                                                      //                 borderRadius: BorderRadius.circular(8),
-                                                      //               ),
-                                                      //               width: 34,
-                                                      //
-                                                      //               child: Center(child: Text(item.id,
-                                                      //                 style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),)),
-                                                      //             ),
-                                                      //
-                                                      //             // child: Text(item.id),
-                                                      //           );
-                                                      //         },
-                                                      //       );
-                                                      //     }
-                                                      //   },
-                                                      // ),
-                                                    ),
+                                                      Expanded(
+                                                        child: _buildTileText(
+                                                            text: "- ${item.origin ??''}",
+                                                            title: 'Brand Origin'),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: _buildTileText(
+                                                            text: item.description??'',
+                                                            title: 'Description'),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    // mainAxisAlignment:
+                                                    // MainAxisAlignment.spaceBetween,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text("Quantity:",
+                                                            style: TextStyle(fontSize: 15,color: AppColors.mutedColor)
+                                                        )
+                                                      ),
+                                                      Expanded(
+                                                          child:
+                                                        Text(
+                                                            item.qtyList!.fold(0.0, (previousValue, element) => previousValue + element).toString(),
+                                                           // '${controller.inputValue.value}',
+                                                            style: TextStyle(fontSize: 17),
+                                                          ),
+
+                                                      ),
+                                                      Expanded(
+                                                          child: InkWell(
+                                                              onTap: () {
+                                                                showModalBottomSheet(
+                                                                    backgroundColor: Colors.white,
+                                                                    isScrollControlled: true,
+                                                                    shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                      BorderRadius.vertical(
+                                                                        top: Radius.circular(30),
+                                                                      ),
+                                                                    ),
+                                                                    context: context,
+                                                                    builder: (context) => SingleChildScrollView(
+                                                                      padding: EdgeInsets.only(
+                                                                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                                                                      ),
+                                                                      child: QuantitySheet(
+                                                                          onTapPercent: () {
+                                                                            controller.addQuantity(index: index,qty:_quantityController.text.isEmpty?0.0: double.parse(_quantityController.text));
+                                                                          },
+                                                                          onTapAmount: () {},
+                                                                          onChangePercent: (value) {},
+                                                                          onChangeAmount: (value) {},
+
+                                                                          quantityController:
+                                                                          _quantityController),
+                                                                    ));
+
+                                                              },
+                                                              child: Icon(Icons.add))),
+                                                      Expanded(
+                                                        child: Container(
+                                                          height: 50,
+                                                          child:
+                                                              SingleChildScrollView(
+                                                            // scrollDirection: Axis.horizontal,
+                                                            child:  Text(
+                                                              item.qtyList!.join('+'),
+                                                             // '${controller.result.value}',
+                                                                  style: TextStyle(
+                                                                      fontSize: 18),
+                                                                  softWrap: true,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .clip,
+                                                                )
+
+                                                          ),
+                                                          // child: GetX<MyController>(
+                                                          //   builder: (controller) {
+                                                          //     if (controller.items.isEmpty) {
+                                                          //       return CircularProgressIndicator(); // Show loader while fetching data
+                                                          //     } else {
+                                                          //       return ListView.builder(
+                                                          //        // physics: NeverScrollableScrollPhysics(),
+                                                          //         scrollDirection: Axis.horizontal,
+                                                          //         itemCount: controller.items.length,
+                                                          //         itemBuilder: (BuildContext context, int index) {
+                                                          //           final item = controller.items[index];
+                                                          //           return Card(
+                                                          //             child:  Container(
+                                                          //               decoration: BoxDecoration(
+                                                          //                 color: Color(0xffeeeeee),
+                                                          //                 borderRadius: BorderRadius.circular(8),
+                                                          //               ),
+                                                          //               width: 34,
+                                                          //
+                                                          //               child: Center(child: Text(item.id,
+                                                          //                 style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),)),
+                                                          //             ),
+                                                          //
+                                                          //             // child: Text(item.id),
+                                                          //           );
+                                                          //         },
+                                                          //       );
+                                                          //     }
+                                                          //   },
+                                                          // ),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ],
                                               ),
-                                            ],
-                                          ),
-                                        ))),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                                            ))),
+                                  ),
+                                );
+                              },
+                        );
+                           }
+                         ),
+
                     ),
                   ],
                 ),
@@ -565,6 +637,7 @@ class CreateLoadingSheetScreen extends StatelessWidget {
 
   Row popupTitle({
     required Function() onTap,
+    required String text
   }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -572,6 +645,15 @@ class CreateLoadingSheetScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 0),
         ),
+        Padding(
+          padding: const EdgeInsets.only(right: 120),
+          child: Text(text,style: TextStyle(
+            fontSize: 15,
+            color: AppColors.mutedColor,
+          ),
+          ),
+        ),
+
         InkWell(
           onTap: onTap,
           child: CircleAvatar(
@@ -595,58 +677,71 @@ class CreateLoadingSheetScreen extends StatelessWidget {
         text,
         textAlign: TextAlign.start,
         style: const TextStyle(
-            color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+            color: AppColors.mutedColor, fontSize: 15, ),
       ),
     );
   }
 
   ClipRRect buildExpansionTextFields(
       {required TextEditingController controller,
-      required Function() onTap,
-      String? hint,
-      bool? isReadOnly,
-      bool? isSearch,
-      bool? isClosing,
-      bool? disableSuffix,
-      FocusNode? focus,
-      bool? isDropdown,
-      bool? isTime,
-      Function(String)? onChanged,
-      Function()? onEditingComplete}) {
+        required Function() onTap,
+        String? hint,
+        bool? isReadOnly,
+        bool? isSearch,
+        bool? isClosing,
+        bool? disableSuffix,
+        FocusNode? focus,
+        bool? isDropdown,
+        bool? isTime,
+        Function(String)? onChanged,
+        Function()? onEditingComplete}) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(5.0),
       child: TextField(
         controller: controller,
-        style: TextStyle(fontSize: 12, color: AppColors.black12),
+        style: TextStyle(
+            fontSize: 12,
+            color: isClosing != null ? AppColors.primary : AppColors.mutedColor),
         maxLines: 1,
         onTap: onTap,
         onChanged: onChanged,
         onEditingComplete: onEditingComplete,
         readOnly: isReadOnly ?? true,
+        autofocus: false,
         decoration: InputDecoration(
-          label: Text("Select"),
+          isCollapsed: true,
+          isDense: true,
+          filled: true,
           hintText: hint ?? '',
           // enabled: false,
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(width: 1, color: Colors.black12),
-          ),
           border: const OutlineInputBorder(
-              borderSide: BorderSide(
-            color: Colors.black12,
-          )),
-          // fillColor: AppColors.lightGrey.withOpacity(0.6),
+              borderSide: BorderSide(color: Colors.black, width: 2)),
+          fillColor: AppColors.lightGrey.withOpacity(0.6),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 10,
             vertical: 12,
           ),
           suffixIcon: Padding(
             padding: const EdgeInsets.only(right: 8),
-            child:
-                InkWell(onTap: () {}, child: Icon(Icons.keyboard_arrow_down)),
+            child: disableSuffix != null
+                ? Container()
+                : Icon(
+              isTime != null
+                  ? Icons.schedule
+                  : isDropdown != null
+                  ? Icons.keyboard_arrow_down
+                  : isClosing != null
+                  ? Icons.cancel_rounded
+                  : isSearch != null
+                  ? Icons.search
+                  : Icons.calendar_month_outlined,
+              color: isClosing != null
+                  ? AppColors.primary
+                  : AppColors.mutedColor,
+              size: 20,
+            ),
           ),
-          suffixIconConstraints: BoxConstraints.tightFor(
-            height: 20,
-          ),
+          suffixIconConstraints: BoxConstraints.tightFor(height: 20, width: 30),
         ),
       ),
     );
@@ -660,31 +755,39 @@ class CreateLoadingSheetScreen extends StatelessWidget {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            insetPadding: EdgeInsets.symmetric(horizontal: 30),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                10,
-              ),
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                AlertDialog(
+                  insetPadding: EdgeInsets.symmetric(horizontal: 20,),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      10,
+                    ),
+                  ),
+
+                  // insetPadding: EdgeInsets.symmetric(horizontal: 10),
+                  title: popupTitleview(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      title: '$filterId'
+                  ),
+                  content: FilterDiailog(
+                    filterId: filterId,
+                    //filterList: filterList
+                  ),
+                  // actions: [
+                  //   TextButton(
+                  //     onPressed: () {
+                  //       Navigator.of(context).pop(); // Close the dialog on cancel
+                  //     },
+                  //     child: Text('Cancel'),
+                  //   ),
+                  // ],
+                ),
+              ],
             ),
-            // insetPadding: EdgeInsets.symmetric(horizontal: 10),
-            title: popupTitleview(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                title: 'Item $filterId'),
-            content: FilterDiailog(
-              filterId: filterId,
-              //filterList: filterList
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog on cancel
-                },
-                child: Text('Cancel'),
-              ),
-            ],
           );
         });
   }
@@ -746,7 +849,7 @@ class CreateLoadingSheetScreen extends StatelessWidget {
               borderSide:
                   BorderSide(width: 1, color: Colors.black12), //<-- SEE HERE
             ),
-            label: Text("Enter description"),
+            label: Text(""),
             focusedBorder: OutlineInputBorder(
               borderSide:
                   BorderSide(width: 1, color: Colors.black12), //<-- SEE HERE
@@ -767,12 +870,13 @@ class CreateLoadingSheetScreen extends StatelessWidget {
               title: popupTitle(
                 onTap: () {
                   Navigator.pop(context);
-                },
+                }, text: '',
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
               backgroundColor: Colors.white,
+              //Color(0xffffffff),
               insetPadding: EdgeInsets.symmetric(horizontal: 10),
               content: Container(
                 height: MediaQuery.of(context).size.height / 1.2,
@@ -783,28 +887,10 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                       const SizedBox(
                         height: 15,
                       ),
-                      buildTextFieldLabel('Item Name'),
+                      buildTextFieldLabel('Brand'),
                       Obx(
                         () => buildExpansionTextFields(
-                          controller:
-                              addItemController.itemNameController.value,
-                          onTap: () {
-                            _buildFilterDialog(context,
-                                filterId: controller.nameFilterId
-                              //filterList: itemListController.categoryFilter
-                            );
-                          },
-                          isDropdown: true,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      buildTextFieldLabel('Item Brand'),
-                      Obx(
-                        () => buildExpansionTextFields(
-                          controller:
-                              addItemController.itemBrandController.value,
+                          controller: controller.itemBrandController.value,
                           onTap: () {
                             _buildFilterDialog(context,
                                 filterId: controller.brandFilterId
@@ -817,11 +903,10 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                       const SizedBox(
                         height: 15,
                       ),
-                      buildTextFieldLabel('Item Origin'),
+                      buildTextFieldLabel('Origin'),
                       Obx(
                         () => buildExpansionTextFields(
-                          controller:
-                              addItemController.itemOriginController.value,
+                          controller: controller.itemOriginController.value,
                           onTap: () {
                             _buildFilterDialog(context,
                                 filterId: controller.originFilterId
@@ -834,11 +919,10 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                       const SizedBox(
                         height: 15,
                       ),
-                      buildTextFieldLabel('Item Class'),
+                      buildTextFieldLabel('Class'),
                       Obx(
                         () => buildExpansionTextFields(
-                          controller:
-                              addItemController.itemClassController.value,
+                          controller: controller.itemClassController.value,
                           onTap: () {
                             _buildFilterDialog(context,
                                 filterId: controller.classFilterId
@@ -851,11 +935,10 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                       const SizedBox(
                         height: 15,
                       ),
-                      buildTextFieldLabel('Item Category'),
+                      buildTextFieldLabel('Category'),
                       Obx(
                         () => buildExpansionTextFields(
-                          controller:
-                              addItemController.itemCategoryController.value,
+                          controller: controller.itemCategoryController.value,
                           onTap: () {
                             _buildFilterDialog(context,
                                 filterId: controller.categoryFilterId
@@ -868,13 +951,30 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                       const SizedBox(
                         height: 15,
                       ),
-                      buildTextFieldLabel('Item Description'),
+                      buildTextFieldLabel('Name'),
+                      Obx(
+                        () => buildExpansionTextFields(
+                          controller: controller.itemNameController.value,
+                          onTap: () {
+                            _buildFilterDialog(context,
+                                filterId: controller.nameFilterId
+                                //filterList: itemListController.categoryFilter
+                                );
+                          },
+                          isDropdown: true,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      buildTextFieldLabel('Description'),
                       Obx(
                         () => buildTextField(
                           controller:
-                              addItemController.itemDescriptionController.value,
+                              controller.itemDescriptionController.value,
                         ),
                       ),
+
                       SizedBox(
                         height: 25,
                       ),
@@ -891,11 +991,15 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                               children: [
                                 Text("Quantity  ",
                                     style: TextStyle(fontSize: 20)),
-                                Text("(90)",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Color(0xff01579b),
-                                    )),
+                                GetX<MyController>(
+                                  init: MyController(),
+                                  builder: (controller) {
+                                    return Text(
+                                      '(${controller.counter.value})',
+                                      style: TextStyle(fontSize: 25),
+                                    );
+                                  },
+                                ),
                               ],
                             ),
                           ),
@@ -907,7 +1011,11 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                                 border: Border.all(color: Colors.black12),
                                 //borderRadius: BorderRadius.circular(4)
                               ),
-                              child: Icon(Icons.remove)),
+                              child: InkWell(
+                                  onTap: () {
+                                    Get.find<MyController>().decrement();
+                                  },
+                                  child: Icon(Icons.remove))),
                           Container(
                             alignment: Alignment.center,
                             height: MediaQuery.of(context).size.height / 16,
@@ -916,11 +1024,23 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                               border: Border.all(color: Colors.black12),
                               // borderRadius: BorderRadius.circular(4)
                             ),
-                            child: Text("1",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.black,
-                                )),
+                            child: GetX<MyController>(
+                              builder: (controller) {
+                                _textEditingController.text =
+                                    controller.counter.value.toString();
+                                return TextField(
+                                  controller: _textEditingController,
+                                  keyboardType: TextInputType.number,
+                                  textAlign: TextAlign.center,
+                                  decoration: InputDecoration(
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.black12),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                           Container(
                               alignment: Alignment.center,
@@ -930,7 +1050,11 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                                 border: Border.all(color: Colors.black12),
                                 // borderRadius: BorderRadius.circular(4)
                               ),
-                              child: Icon(Icons.add)),
+                              child: InkWell(
+                                  onTap: () {
+                                    Get.find<MyController>().increment();
+                                  },
+                                  child: Icon(Icons.add))),
                           SizedBox(
                             width: 15,
                           ),
@@ -1137,5 +1261,164 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                 ),
               ),
             ));
+  }
+
+
+
+  selectDocumentType({required BuildContext context, var customerList,
+    required bool pname,
+    required bool dtype,
+  }) async {
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20))),
+           title: popupTitle(
+            onTap: () {
+          Navigator.pop(context);
+        },
+        text: dtype==true
+        ?'Document Type'
+            :"Party Name"
+        ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              buildExpansionTextFields(
+                  controller: TextEditingController(),
+                  onTap: () {},
+                  hint: 'Search',
+                  isReadOnly: false,
+                  onChanged: (value) {
+                    // controller.searchFilter(
+                    //   filterId: filterId,
+                    //   value: value,
+                    // );
+                  },
+                  // onEditingComplete: () async {
+                  //   await itemListController.changeFocus(context);
+                  // },
+                  isSearch: true),
+              Flexible(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child:
+                    dtype==true
+                    // controller.isLoading.value
+                    //     ? SalesShimmer.locationPopShimmer()
+                         ?ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: documentype.length,
+                            itemBuilder: (context, index) {
+                              var customer = partyname[index];
+                              return InkWell(
+                                onTap: () {
+                                  controller.updateSelectedValuedtype(
+                                      documentype[index]);
+                                  textController.text = documentype[index];
+                                  final data = controller.items[index].id;
+                                  // this.controller.itemList.val = customer;
+                                  // Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  // controller.customerFilterList.value = this.customerList;
+                                  //   return this.customer.value;
+                                },
+                                  child:Column(
+                                    children: [
+                                      ListTile(
+                                        leading:  AutoSizeText(
+                                          documentype[index],
+                                          // "${customer.code} - ${customer.name}",
+                                          minFontSize: 12,
+                                          maxFontSize: 16,
+                                          style: TextStyle(
+                                            color: AppColors.mutedColor,
+                                          ),
+                                        ),
+
+                                      ),
+                                      Divider(
+                                        //  height: 100,
+                                        color: AppColors.black12,
+                                        thickness: 1,
+                                        indent: 10,
+                                        endIndent: 10,
+                                      ),
+                                    ],
+                                  )
+                              );
+                            },
+                          )
+                        :ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: partyname.length,
+                      itemBuilder: (context, index) {
+                        var customer = partyname[index];
+                        return InkWell(
+                            onTap: () {
+                              controller
+                                  .updateSelectedValue(partyname[index]);
+                              textController.text = partyname[index];
+                              final data = controller.items[index].id;
+                              // this.controller.itemList.val = customer;
+                              // Navigator.pop(context);
+                              Navigator.pop(context);
+                              // controller.customerFilterList.value = this.customerList;
+                              //   return this.customer.value;
+                            },
+                            child:Column(
+                              children: [
+                                ListTile(
+                                  leading:  AutoSizeText(
+                                    partyname[index],
+                                    // "${customer.code} - ${customer.name}",
+                                    minFontSize: 12,
+                                    maxFontSize: 16,
+                                    style: TextStyle(
+                                      color: AppColors.mutedColor,
+                                    ),
+                                  ),
+
+                                ),
+                                Divider(
+                                  //  height: 100,
+                                  color: AppColors.black12,
+                                  thickness: 1,
+                                  indent: 10,
+                                  endIndent: 10,
+                                ),
+                              ],
+                            )
+                          // Card(
+                          //   child: Padding(
+                          //     padding: const EdgeInsets.all(8.0),
+                          //     child: AutoSizeText(
+                          //       partyname[index],
+                          //       // "${customer.code} - ${customer.name}",
+                          //       minFontSize: 12,
+                          //       maxFontSize: 16,
+                          //       style: TextStyle(
+                          //         color: AppColors.mutedColor,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                        );
+                      },
+                    ),
+
+                ),
+              ),
+            ],
+          ),
+
+        );
+      },
+    );
+    //  return customer.value;
   }
 }

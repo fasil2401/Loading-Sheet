@@ -1,10 +1,10 @@
-class Category {
-  final String id;
+class PartyName {
+  final String type;
   //final String category;
 
 
-  Category({
-    required this.id,
+  PartyName({
+    required this.type,
    // required this.category,
     
   });

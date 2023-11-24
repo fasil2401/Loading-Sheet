@@ -135,7 +135,7 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                                   //     }),
                                 ),
                                 SizedBox(
-                                  width: 10,
+                                  width: MediaQuery.of(context).size.width/40
                                 ),
                                 Expanded(
 

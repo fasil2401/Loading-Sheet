@@ -5,7 +5,7 @@ import 'package:flutter/rendering.dart';
 
 
 void main() async {
-
+  //debugPaintSizeEnabled = false;
   runApp( MyApp());
 }
 
@@ -18,7 +18,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
 
       title: 'Flutter Demo',
-
+      theme: ThemeData(
+        primarySwatch: Colors.blue, // Change the primary color here
+        // Other theme configurations
+      ),
       // theme: ThemeData(
       //
       //

@@ -179,6 +179,7 @@ class QuantitySheet extends StatelessWidget {
 
       // textInputAction: TextInputAction.continueAction,
      // focusNode: focusNode,
+      autofocus: true,
       keyboardType: TextInputType.number,
       style: TextStyle(fontSize: 12, color: AppColors.primary),
       decoration: InputDecoration(

@@ -84,7 +84,7 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                                       color: AppColors.primary),
                                 ),
                                 SizedBox(
-                                  width: 60,
+                                  width: MediaQuery.of(context).size.width/6.2,
                                 ),
                                 Expanded(
                                     child: Column(
@@ -104,8 +104,8 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(
-                              height: 10,
+                            SizedBox(
+                              height: MediaQuery.of(context).size.width/30,
                             ),
                             Row(
                               //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -234,25 +234,6 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: InkWell(
-                                        onTap: () {
-                                          showModalBottomSheet(
-                                              backgroundColor: Colors.white,
-                                              isScrollControlled: true,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius.vertical(
-                                                  top: Radius.circular(30),
-                                                ),
-                                              ),
-                                              context: context,
-                                              builder: (context) => QuantitySheet(
-                                                  onTapPercent: () {},
-                                                  onTapAmount: () {},
-                                                  onChangePercent: (value) {},
-                                                  onChangeAmount: (value) {},
-                                                  quantityController:
-                                                  _quantityController));
-                                        },
                                         child: Row(
                                           children: [
                                             Text("Total Quantity:  ",
@@ -662,7 +643,7 @@ class CreateLoadingSheetScreen extends StatelessWidget {
         textAlign: TextAlign.start,
         style: const TextStyle(
           color: AppColors.mutedColor,
-          fontSize: 15,
+          fontSize: 16,
         ),
       ),
     );
@@ -702,7 +683,7 @@ class CreateLoadingSheetScreen extends StatelessWidget {
           hintText: hint ?? '',
           // enabled: false,
           border: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black, width: 2)),
+              borderSide: BorderSide(color: AppColors.lightGrey, width: 1)),
           fillColor: AppColors.lightGrey.withOpacity(0.6),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 10,
@@ -864,7 +845,7 @@ class CreateLoadingSheetScreen extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          backgroundColor: Colors.white,
+         // backgroundColor: Colors.white,
           //Color(0xffffffff),
           insetPadding: EdgeInsets.symmetric(horizontal: 10),
           content: Container(
@@ -978,14 +959,14 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                         ),
                         child: Row(
                           children: [
-                            Text("Quantity  ",
+                            Text("   Quantity",
                                 style: TextStyle(fontSize: 20)),
                             GetX<MyController>(
                               init: MyController(),
                               builder: (controller) {
                                 return Text(
                                   '(${controller.counter.value})',
-                                  style: TextStyle(fontSize: 25),
+                                  style: TextStyle(fontSize: 20),
                                 );
                               },
                             ),
@@ -1007,7 +988,7 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                               child: Icon(Icons.remove))),
                       Container(
                         alignment: Alignment.center,
-                        height: MediaQuery.of(context).size.height / 16,
+                        height: MediaQuery.of(context).size.height / 15.7,
                         width: MediaQuery.of(context).size.width / 9,
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.black12),
@@ -1021,12 +1002,12 @@ class CreateLoadingSheetScreen extends StatelessWidget {
                               controller: _textEditingController,
                               keyboardType: TextInputType.number,
                               textAlign: TextAlign.center,
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide:
-                                  BorderSide(color: Colors.black12),
-                                ),
-                              ),
+                              // decoration: InputDecoration(
+                              //   enabledBorder: OutlineInputBorder(
+                              //     borderSide:
+                              //     BorderSide(color: Colors.black12),
+                              //   ),
+                              // ),
                             );
                           },
                         ),

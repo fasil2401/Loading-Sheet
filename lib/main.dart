@@ -1,11 +1,10 @@
 
 import 'package:axolon_loading_sheet/View/loading_sheet_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 
-Future main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
+void main() async {
 
   runApp( MyApp());
 }
@@ -17,7 +16,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
       title: 'Flutter Demo',
+
       // theme: ThemeData(
       //
       //

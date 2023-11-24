@@ -5,11 +5,11 @@ import '../../Resources/Colors.dart';
 class ParrtyNameRow extends StatelessWidget {
   ParrtyNameRow(
       {Key? key,
-      required this.onTap,
-      required this.controller,
-      required this.isLoading,
-      required this.dtype,
-      required this.pname})
+        required this.onTap,
+        required this.controller,
+        required this.isLoading,
+        required this.dtype,
+        required this.pname})
       : super(key: key);
 
   Function() onTap;
@@ -35,38 +35,31 @@ class ParrtyNameRow extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(top: 10),
             child: TextField(
-                style: TextStyle(
-                  fontSize: 15,
-                  color: AppColors.mutedColor,
-                ),
-                controller: controller,
-                readOnly: true,
-                decoration: InputDecoration(
+              controller: controller,
+              style: const TextStyle(fontSize: 14, color: AppColors.mutedColor),
+              maxLines: 1,
+              onTap: onTap,
+              readOnly: true,
+              decoration: InputDecoration(
                   isCollapsed: true,
                   isDense: true,
-                  border: InputBorder.none,
-                  // suffix: Transform.translate(
-                  //   offset: Offset(0, 8),
-                  //   child: SizedBox(
-                  //     width: 20,
-                  //     height: 20,
-                  //     child:
-                  //     // isLoading
-                  //     //     ? CircularProgressIndicator(
-                  //     //   strokeWidth: 2,
-                  //     //   color: AppColors.mutedColor,
-                  //     // )
-                  //     //     :
-                  //         Icon(Icons.arrow_drop_down),
-                  //   ),
-                  // ),
-                ),
-                onTap: onTap),
+                  filled: true,
+                  // enabled: false,
+                  fillColor: AppColors.lightGrey.withOpacity(0.6),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
+                  suffix: Icon(Icons.arrow_drop_down_circle_outlined,color: Color(0xff01579b),
+                    size: 20,)
+              ),
+            ),
           ),
         ),
-        Expanded(
-          child: InkWell(child: Icon(Icons.arrow_drop_down), onTap: onTap),
-        )
+        // Expanded(
+        //   child: InkWell(child: Icon(Icons.arrow_drop_down_circle_outlined,color: Colors.blue,size: 18,),
+        //       onTap: onTap),
+        // )
       ],
     );
   }

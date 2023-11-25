@@ -14,6 +14,7 @@ class FilterDiailog extends StatelessWidget {
   final controller = Get.put(MyController());
 
   String filterId;
+  final MyController homecontroller = Get.put(MyController());
 
   @override
   Widget build(BuildContext context) {
@@ -80,29 +81,18 @@ class FilterDiailog extends StatelessWidget {
           //:SizedBox(),
           Flexible(
             child: GetBuilder<MyController>(
-              builder: (_) {
+              builder: (controller) {
                 return ListView.builder(
                     // scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
                     // physics: NeverScrollableScrollPhysics(),
-                    itemCount: _.desitems.length,
+                    itemCount: controller.filterList.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final item = _.desitems[index];
+                      final item = controller.filterList[index];
                       return InkWell(
                         onTap: () {
-
-                          // _.selectFilterValue(
-                          //
-                          //     filterId: filterId,
-                          //     value:   _.desitems.updateSelectedValue(_.desitems[index] as String),
-                          //
-                          //     // "${_.filterSearchList[index].code}${filterId ==
-                          //     //     'locationFilterId' ? '- ${_.filterSearchList[index].name}' : ""}"
-                          // );
-                          // value:
-                          // "${_.filterSearchList[index].code}${filterId == 'locationFilterId' ? '- ${_.filterSearchList[index].name}' : ""}"
-                          //value: "${_.filterSearchList[index].code} - ${_.filterSearchList[index].name}");
-
+                         // print(controller.selectedFilter.value.name);
+                          homecontroller.updateSelectedFilter(item);
                           Navigator.pop(context);
                         },
                         child: Column(
@@ -121,12 +111,12 @@ class FilterDiailog extends StatelessWidget {
                                                     const EdgeInsets.all(8.0),
                                                 child: Row(
                                                   children: [
-                                                    Text(item.code),
+                                                    Text(item.code ?? ""),
                                                     SizedBox(
                                                       width: 80,
                                                     ),
                                                     Expanded(
-                                                        child: Text(item.name))
+                                                        child: Text(item.name ??""))
                                                   ],
                                                 ),
                                               )
@@ -136,19 +126,19 @@ class FilterDiailog extends StatelessWidget {
                                             leading: Text(
                                               filterId ==
                                                       controller.brandFilterId
-                                                  ? item.brand
+                                                  ? item.brand ?? ''
                                                   : filterId ==
                                                           controller
                                                               .originFilterId
-                                                      ? item.origin
+                                                      ? item.origin ?? ""
                                                       : filterId ==
                                                               controller
                                                                   .classFilterId
-                                                          ? item.cls
+                                                          ? item.clas ?? ""
                                                           : filterId ==
                                                                   controller
                                                                       .categoryFilterId
-                                                              ? item.category
+                                                              ? item.category ?? ""
                                                               : "",
                                               style: TextStyle(fontSize: 15),
                                             ),

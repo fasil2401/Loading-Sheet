@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../Models/category_models.dart';
+import '../Models/item_model.dart';
 import '../Models/partname_dropdowm_models.dart';
 
 
@@ -26,19 +27,77 @@ class MyController extends GetxController {
      CreateListModelLoading(category: 'Fruits',partyname: 'KLM Suppliers',sheetno: '3567',date: '12 Nov 2023',endtime: '6.00:pm',starttime: '9.00:am'),
      CreateListModelLoading(category: 'Fruits',partyname: 'NOP Suppliers',sheetno: '2367',date: '13 Nov 2023',endtime: '6.00:pm',starttime: '9.00:am')
    ];
-  var createList = [CreateListModel(description: 'Aplle Gala',itemCode: 'AP00023',origin: 'India',qtyList: [10.5]),
-    CreateListModel(description: 'Orang Gala',itemCode: 'AP00023',origin: 'India',qtyList: [10.5]),
-    CreateListModel(description: 'Grape Gala',itemCode: 'AP00023',origin: 'India',qtyList: [23.5]),
-    CreateListModel(description: 'Cabage Gala',itemCode: 'AP00023',origin: 'India',qtyList: [32.5]),
-    CreateListModel(description: 'PineApple Gala',itemCode: 'AP00023',origin: 'India',qtyList: [1.5]),]; ///create   loading sheet listcreateion
+  var createList = [CreateListModel(description: 'Aplle Gala',itemCode: 'AP00023',origin: 'India',),
+    CreateListModel(description: 'Orang Gala',itemCode: 'AP00023',origin: 'India',),
+    CreateListModel(description: 'Grape Gala',itemCode: 'AP00023',origin: 'India',),
+    CreateListModel(description: 'Cabage Gala',itemCode: 'AP00023',origin: 'India',),
+    CreateListModel(description: 'PineApple Gala',itemCode: 'AP00023',origin: 'India',),];///create   loading sheet listcreateion
+
+   var filterList=
+   [FilterListItem(brand: "Rivers",origin: "India",clas: "Air Shipment",category: "Fruits",name: "Apple",code: "GH005"),
+    FilterListItem(brand: "AAJ",origin: "Brazil",clas: "Dry Food",category: "Vegetables",name: "Coffee",code: "HF347"),
+    FilterListItem(brand: "Actel",origin: "America",clas: "Fresh Meat",category: "Coffee",name: "Orange",code: "ER80"),
+    FilterListItem(brand: "Bono",origin: "Canada",clas: "Fresh Eggs",category: "Chips",name: "Nuts",code: "YG456"),
+    FilterListItem(brand: "Brixi",origin: "Egypt",clas: "Dry Fruits",category: "Flour",name: "Rice Flour",code: "YD456"),];
+
+  Rx<FilterListItem> selectedFilter = Rx<FilterListItem>(FilterListItem());
+
+  // selectFilterValue({required String filterId, required String value}) {
+  //   if (filterId == categoryFilterId) {
+  //     itemCategoryController.value.text = value;
+  //     update();
+  //   } else if (filterId == originFilterId) {
+  //     itemOriginController.value.text = value;
+  //     update();
+  //   }
+  //
+  // }
+
+  void updateSelectedFilter(FilterListItem newValue) {
+    selectedFilter.value = newValue;
+    update(); // To update the UI after changing the value
+  }
 
 
+  RxList<Data> dataList = <Data>[].obs;
+  void addData(
+      String title,
+      String description,
+      String cls,
+      String category,
+      String name,
+      String itemCode,
+      String brand,
+     // double? quantity,
+     int intValue,
+      String origin)
+  {
+  List<double> doubleList = [counter.toDouble()];
+    dataList.add(Data(
+      title: title,
+      description: description,
+      cls: cls,
+      category: category,
+      name: name,
+      itemCode: itemCode,
+      brand: brand,
+      qtyList: doubleList,
+      //quantity:quantity,
+      origin: origin,
+
+
+
+
+
+
+     ));
+  }
 
 
   var filterSearchList = [].obs;
 
   addQuantity({required int index, required double qty}){
-    createList[index].qtyList!.add(qty);
+    dataList[index].qtyList!.add(qty);
     update();
   }
 
@@ -130,15 +189,25 @@ class MyController extends GetxController {
 
     result.value = num1 + num2;
   }
+  @override
+  void onClose() {
+    itemOriginController.value.dispose();
+    itemBrandController.value.dispose();
+    itemClassController.value.dispose();
+    itemCategoryController.value.dispose();
+    itemNameController.value.dispose();
+    itemDescriptionController.value.dispose();
 
+    // Dispose of the controller when the page is removed
+    super.onClose();
+  }
 
   void clearInputValue() {
     inputValue.value = '';
     selectedValuedtype = ''.obs;
     selectedValue = ''.obs;
     result = 0.obs;
-
-    // Reset the input value to an empty string
+    counter=1.obs;// Reset the input value to an empty string
   }
 
   ///add item popup page textformfeild controllers-----///
@@ -150,9 +219,15 @@ class MyController extends GetxController {
   var itemCategoryController = TextEditingController().obs;
   var itemBrandController = TextEditingController().obs;
   var itemOriginController = TextEditingController().obs;
+  var quantityController = TextEditingController(text: "1").obs;
+
+
 
   ///---------------------------------------------///
-
+quantityChange(){
+  counter.value =int.parse(quantityController.value.text);
+  update();
+}
 
 
   searchFilter({required String filterId, required String value}) {
@@ -280,6 +355,35 @@ class MyController extends GetxController {
     ];
     desitems.assignAll(dummyData);
   }
+  var isEditingQuantity=false.obs;
+  var quantity=1.obs;
+  editQuantity() {
+    isEditingQuantity.value = !isEditingQuantity.value;
+  }
+
+  incrementQuantity() {
+    isEditingQuantity.value = false;
+    quantity.value++;
+    update();
+  }
+
+  decrementQuantity() {
+    isEditingQuantity.value = false;
+    if (quantity > 1) {
+      quantity.value--;
+      update();
+    }
+  }
+
+  setQuantity(String value) {
+    quantity.value = int.parse(value);
+  }
+
+  resetQuantity() {
+    quantity.value = 1;
+    isEditingQuantity.value = false;
+    update();
+  }
 
 
 
@@ -289,9 +393,11 @@ class CreateListModel{
 String? itemCode;
 String? description;
 String? origin;
-List<double>? qtyList = [];
+//List<double>? qtyList = [];
 
-CreateListModel({this.itemCode,this.description,this.origin,this.qtyList});
+CreateListModel({this.itemCode,this.description,this.origin,
+  //this.qtyList
+});
 }
 
 class CreateListModelLoading{
@@ -305,4 +411,17 @@ class CreateListModelLoading{
 
 
   CreateListModelLoading({this.category,this.partyname,this.date,this.endtime,this.sheetno,this.starttime});
+}
+
+class FilterListItem{
+
+  String? brand;
+  String? origin;
+  String? clas;
+  String? category;
+  String? name;
+  String? code;
+
+
+  FilterListItem({this.category,this.origin,this.name,this.code,this.brand,this.clas});
 }
